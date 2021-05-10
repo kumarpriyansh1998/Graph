@@ -1,0 +1,68 @@
+package Graph2;
+import java.util.*;
+
+public class DFS_pep {
+	int V;
+	int E;
+	ArrayList<edge> AdjList[];
+	boolean visited[];
+	
+	DFS_pep(int V,int E){
+		this.V = V;
+		this.E = E;
+		AdjList = new ArrayList[V];
+		visited = new boolean[V];
+		for(int i=0;i<V;i++) {
+			AdjList[i] = new ArrayList<>();
+		}
+	}
+	
+	public class edge{
+		int from;
+		int to;
+		int weight;
+		edge(int from,int to,int weight){
+			this.weight = weight;
+			this.to =to;
+			this.from = from;
+		}
+	}
+	
+	public void add_node(int from,int to,int weight) {
+		edge to_add1= new edge(from,to,weight);
+		edge to_add2 = new edge(to,from,weight);
+		AdjList[from].add(to_add1);
+		AdjList[to].add(to_add2);
+	}
+	
+	public void print_graph() {
+		for(int i=0;i<V;i++) {
+			for(edge ele:AdjList[i]) {
+				System.out.println(ele.from+"  "+ele.to+"  "+ele.weight);
+			}
+		}
+	}
+	
+
+	
+	
+	public static void main(String[] args) {
+		
+		Scanner sc = new Scanner(System.in);
+		///////////////////I/0
+		int V = sc.nextInt();//Vertices
+		int E = sc.nextInt();//Edges
+		DFS_pep graph = new DFS_pep(V,E);
+		for(int i=0;i<V;i++) {
+			graph.add_node(sc.nextInt(),sc.nextInt(),sc.nextInt()); //V edge in from to weight format Ex: 0 1 5
+		}
+		
+		//////////////////functions
+//		graph.print_graph();
+		
+	}
+	
+
+
+}
+
