@@ -36,56 +36,90 @@ public class PrimsMST {
 	}
 	
 	
-	public class pair implements Comparable<pair>{
-		int ind;
-		int val;
-		pair(int ind,int val){
-			this.ind = ind;
-			this.val =val;
-		}
-		@Override
-		public int compareTo(pair o) {
-			return this.val-o.val;
-			
-		}
+//	public class pair implements Comparable<pair>{
+//		int ind;
+//		int val;
+//		pair(int ind,int val){
+//			this.ind = ind;
+//			this.val =val;
+//		}
+//		@Override
+//		public int compareTo(pair o) {
+//			return this.val-o.val;
+//			
+//		}
+//	
+//	}
 	
-	}
-	
-	public void Prims() {
-		int parent[] = new int[V];
-		Arrays.fill(parent,-1);
-		
-		boolean visited[] = new boolean[V];
-		int wei[] = new int[V];
-		Arrays.fill(wei, Integer.MAX_VALUE);
-		wei[0] = 0;
-		PriorityQueue<pair> pq = new PriorityQueue<>();
-		pq.add(new pair(0,0));
-		for(int i=0;i<V;i++) {
-			int min_ind =0;
-			pair curr_pair = pq.remove();
-			min_ind = curr_pair.ind;
-		
-//			for(int j=0;j<V;j++) {
-//				if(wei[j]<min && visited[j]==false) {
-//					min = wei[j];
-//					min_ind = j;
+//	public void Prims() {
+//		int parent[] = new int[V];
+//		Arrays.fill(parent,-1);
+//		
+//		boolean visited[] = new boolean[V];
+//		int wei[] = new int[V];
+//		Arrays.fill(wei, Integer.MAX_VALUE);
+//		wei[0] = 0;
+//		PriorityQueue<pair> pq = new PriorityQueue<>();
+//		pq.add(new pair(0,0));
+//		int min_weight=0;
+//		for(int i=0;i<V;i++) {
+//			int min_ind =0;
+//			pair curr_pair = pq.remove();
+//			min_weight+=curr_pair.val;
+//			min_ind = curr_pair.ind;
+//
+//			
+//			visited[min_ind] = true;
+//			for(edge ele:AdjList[min_ind]) {
+//				if(ele.weight<wei[ele.to] && visited[ele.to]==false) {
+//					wei[ele.to] = ele.weight;
+//					pq.add(new pair(ele.to,ele.weight));
+//					parent[ele.to] = min_ind;
 //				}
 //			}
-			visited[min_ind] = true;
-			for(edge ele:AdjList[min_ind]) {
-				if(ele.weight<wei[ele.to] && visited[ele.to]==false) {
-					wei[ele.to] = ele.weight;
-					pq.add(new pair(ele.to,ele.weight));
-					parent[ele.to] = min_ind;
+//		}
+//		System.out.println(min_weight);
+//		for(int i=1;i<V;i++) {
+//			System.out.println(parent[i]+" "+i);
+//		}
+//	}
+	
+	public static class Pair implements Comparable<Pair>{
+		int curr;
+		int from;
+		int weight;
+		Pair(int curr,int from,int weight){
+			this.curr  = curr;
+			this.from = from;
+			this.weight = weight;
+		}
+		@Override
+		public int compareTo(Pair o) {
+			return this.weight-o.weight;
+		}
+		
+	}
+	///////////////////////Space Optimized. Without using weight, parent array
+	public void Prims() {
+		PriorityQueue<Pair> pq = new PriorityQueue<>();
+		pq.add(new Pair(0,-1,0));
+		boolean visited[] = new boolean[V];
+		int cost =0;
+		while(pq.size()>0) {
+			Pair p = pq.remove();
+			if(visited[p.curr]==true) continue;
+			visited[p.curr] = true;
+			if(p.from!=-1) System.out.println(p.from+" "+p.curr);
+			cost+=p.weight;
+			for(edge ele:AdjList[p.curr]) {
+				if(visited[ele.to]==false) {
+					pq.add(new Pair(ele.to,p.curr,ele.weight));
 				}
 			}
 		}
-		for(int i=1;i<V;i++) {
-			System.out.println(parent[i]+" "+i);
-		}
+		System.out.println(cost);
+		
 	}
-	
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
