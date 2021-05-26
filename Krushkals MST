@@ -1,0 +1,118 @@
+package GraphDS;
+import java.util.*;
+
+public class KrushkalsAlgo {
+	int V;
+	int E;
+	ArrayList<pair> arr;
+	KrushkalsAlgo(int V,int E){
+		this.V= V;
+		this.E = E;
+		arr = new ArrayList<>();
+	}
+	
+	public void add_edge(int from,int to,int weight) {
+		pair curr = new pair(from,to,weight);
+		arr.add(curr);
+	}
+	
+	
+	
+	public static class pair implements Comparable<pair>{
+		int from;
+		int to;
+		int weight;
+		pair(int from,int to,int weight){
+			this.from= from;
+			this.to  = to;
+			this.weight = weight;
+		}
+		@Override
+		public int compareTo(pair p) {
+			return this.weight-p.weight;
+		}
+	}
+	
+	
+	public void krushkals() {
+		Collections.sort(arr);
+
+		int min_weight = 0;
+		node parent[] = new node[V];
+		for(int i=0;i<V;i++) {
+			parent[i] = new node();
+		}
+		
+		
+		for(pair ele:arr) {
+			
+			int a = find(parent,ele.from);
+			
+			int b = find(parent,ele.to);
+			if(a==b) break;
+			else {
+				
+				System.out.println(ele.from+" "+ele.to);
+				min_weight+=ele.weight;
+				union(parent,a,b);
+			}
+		}
+		System.out.println(min_weight);
+	}
+	
+	
+	public static class node{
+		int rank = 0;
+		int parent = -1;
+	}
+	
+	public void union(node parent[],int a,int b) {
+		if(parent[a].rank>parent[b].rank) {
+			parent[b].parent =a;
+			
+		}else if(parent[b].rank>parent[a].rank) {
+			parent[a].parent = b;
+		}
+		else {
+			parent[a].parent = b;
+			parent[b].rank++;
+			
+		}
+	}
+	
+	public int find(node parent[],int ele) {
+		if(parent[ele].parent==-1) return ele;
+		return parent[ele].parent = find(parent,parent[ele].parent);
+	}
+	
+	
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc =new Scanner(System.in);
+		int V = sc.nextInt();
+		int E = sc.nextInt();
+		KrushkalsAlgo graph = new KrushkalsAlgo(V,E); 
+		for(int i=0;i<E;i++) {
+	 		graph.add_edge(sc.nextInt(),sc.nextInt(),sc.nextInt());
+		}
+		graph.krushkals();
+		
+		
+		
+
+	}
+
+}
+
+//6
+//9
+//0 1 4
+//0 2 6
+//1 2 6
+//1 4 4
+//1 3 3
+//2 3 1
+//4 3 2
+//4 5 7
+//3 5 3
