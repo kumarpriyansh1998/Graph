@@ -1,0 +1,120 @@
+package GraphDS;
+import java.util.*;
+
+public class Kosaraju {
+	int V;
+	int E;
+	ArrayList<edge> AdjList[],RevList[];
+	
+	
+	Kosaraju(int V,int E){
+		this.V =V;
+		this.E =E;
+		AdjList = new ArrayList[V];
+		RevList = new ArrayList[V];
+		for(int i=0;i<V;i++) {
+			AdjList[i] = new ArrayList<>();
+			RevList[i] = new ArrayList<>();
+		}
+	}
+	
+	
+	public static class edge{
+		int from;
+		int to;
+		int weight;
+		
+		edge(int from,int to,int weight){
+			this.from = from;
+			this.to = to;
+			this.weight = weight;
+		}
+	}
+	
+	public void add_edge(int from,int to,int weight) {
+		edge curr = new edge(from,to,weight);
+		edge rcurr = new edge(to,from,weight);
+		AdjList[from].add(curr);
+		RevList[to].add(rcurr);
+	}
+	
+	
+	
+	
+	public void kosarajuAlgorithm() {
+		Stack<Integer> stack = dfs1();
+		ArrayList<ArrayList<Integer>> answer =new ArrayList<>();
+		boolean  visited[] = new boolean[V];
+		while(stack.size()>0) {
+			int temp = stack.pop();
+			if(visited[temp]==false) {
+				ArrayList<Integer> curr_component =new ArrayList<>();
+				dfs2(visited,temp,curr_component);
+				answer.add(curr_component);
+			}
+		}
+		System.out.println(answer);
+	}
+	
+	
+	public void dfs2(boolean visited[],int temp,ArrayList<Integer> arr) {
+		if(visited[temp]==false) {
+			visited[temp] = true;
+			arr.add(temp);
+			for(edge ele:RevList[temp]) {
+				if(visited[ele.to]==false) {
+					dfs2(visited,ele.to,arr);
+				}
+			}
+		}
+	}
+	
+	
+	public Stack<Integer> dfs1() {
+		Stack<Integer> stack = new Stack<>();
+		boolean visited[] = new boolean[V];
+		dfs1_utility(visited,0,stack);
+		return stack;
+	}
+	public void dfs1_utility(boolean visited[],int src,Stack<Integer> stack) {
+		if(visited[src]==false) {
+			visited[src]=true;
+			for(edge ele:AdjList[src]) {
+				if(visited[ele.to]==false) {
+					dfs1_utility(visited,ele.to,stack);
+				}
+			}
+			stack.push(src);
+		}
+	}
+	
+	
+	
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		int V =sc.nextInt();
+		int E = sc.nextInt();
+		Kosaraju graph = new Kosaraju(V,E);
+		for(int i=0;i<E;i++) {
+			graph.add_edge(sc.nextInt(), sc.nextInt(), sc.nextInt());
+		}
+		graph.kosarajuAlgorithm();
+
+	}
+
+}
+
+//8
+//10
+//0 1 1
+//1 2 1
+//2 0 1
+//2 3 1
+//3 4 1
+//4 5 1
+//4 7 1
+//5 6 1
+//6 4 1
+//6 7 1
