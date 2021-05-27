@@ -1,0 +1,69 @@
+package GraphDS;
+import java.util.*;
+
+public class FloydWarshell {
+	int v;
+	int e;
+	int matrix[][];
+	FloydWarshell(int v,int e){
+		this.v = v;
+		this.e = e;
+		matrix = new int[v][v];
+	}
+	public void add_edge(int from,int to,int weight) {
+		matrix[from][to] = weight;
+	}
+	
+	// All pair shortest path graph
+	public void FindAPSPG() {
+		
+		for(int i=0;i<v;i++) {
+			for(int j=0;j<v;j++) {
+				if(matrix[i][j]==0 && i!=j) matrix[i][j] = Integer.MAX_VALUE;
+			}
+		}
+		
+		for(int k=0;k<v;k++) {
+			for(int i=0;i<v;i++) {
+				for(int j=0;j<v;j++) {
+					if(matrix[i][k]==Integer.MAX_VALUE || matrix[k][j]==Integer.MAX_VALUE) continue;
+					else {
+						matrix[i][j] = Math.min(matrix[i][j], matrix[i][k]+matrix[k][j]);
+					}
+				}
+			}
+		}
+		
+		
+		for(int ele[]:matrix) {
+			System.out.println(Arrays.toString(ele));
+		}
+		
+	}
+	
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		int v = sc.nextInt();
+		int e = sc.nextInt();
+		FloydWarshell Graph = new FloydWarshell(v,e);
+		for(int i=0;i<e;i++) {
+			Graph.add_edge(sc.nextInt(),sc.nextInt(),sc.nextInt());
+		}
+		
+		Graph.FindAPSPG();
+		
+
+	}
+
+}
+
+//4
+//6
+//0 1 3
+//0 3 5
+//1 0 2
+//1 3 8
+//2 1 1
+//3 2 2
