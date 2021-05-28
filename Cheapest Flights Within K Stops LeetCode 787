@@ -1,0 +1,70 @@
+class Solution {
+    ArrayList<edge> AdjList[];
+    public static class edge{
+        int from;
+        int to;
+        int weight;
+        edge(int from,int to,int weight){
+            this.from = from;
+            this.to  = to;
+            this.weight = weight;
+          
+        }
+    }
+    
+    public static class pair implements Comparable<pair>{
+        int src;
+        int weightsf;
+        int ssf;
+        pair(int src,int weightsf,int ssf){
+            this.src =  src;
+            this.weightsf = weightsf;
+            this.ssf = ssf;
+        }
+        @Override
+        public int compareTo(pair p){
+            return this.weightsf-p.weightsf;
+        }
+    }
+    
+    public int findCheapestPrice(int n, int[][] flights, int src, int dst, int k) {
+        AdjList = new ArrayList[n];
+        for(int i=0;i<n;i++){
+            AdjList[i] = new ArrayList<>();
+        }
+        int E = flights.length;
+        for(int i=0;i<E;i++){
+            edge new_edge = new edge(flights[i][0],flights[i][1],flights[i][2]);
+            AdjList[flights[i][0]].add(new_edge);
+        }
+        
+        
+        PriorityQueue<pair> pq = new PriorityQueue<>();
+        
+        pq.add(new pair(src,0,0));
+        
+        HashMap<Integer, Integer> seen = new HashMap<>();
+        while(pq.size()>0){
+            pair curr = pq.remove();
+            if(curr.src==dst){
+                return curr.weightsf;
+            }
+            
+            if(seen.containsKey(curr.src) && seen.get(curr.src)<=curr.ssf) continue;
+             seen.put(curr.src, curr.ssf);
+            
+            
+            if(curr.ssf>k) continue;
+            for(edge ele:AdjList[curr.src]){
+                
+                    pq.add(new pair(ele.to,ele.weight+curr.weightsf,curr.ssf+1));
+                
+            }
+            
+        }
+     return -1;
+   
+        
+    }
+}
+
