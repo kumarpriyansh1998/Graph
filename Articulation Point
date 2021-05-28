@@ -1,0 +1,85 @@
+package Graph;
+import java.util.*;
+
+public class ArticulationPoint {
+	int V;
+	int E;
+	ArrayList<edge> AdjList[];
+	
+	ArticulationPoint(int V,int E){
+		this.V = V;
+		this.E = E;
+		AdjList = new ArrayList[V];
+		for(int i=0;i<V;i++) {
+			AdjList[i] = new ArrayList<>();
+		}
+	}
+	
+	public static class edge{
+		int from;
+		int to;
+		int weight;
+		edge(int from,int to,int weight){
+			this.from = from;
+			this.to =to;
+			this.weight = weight;
+		}
+	}
+	
+	public void add_edge(int from,int to,int weight) {
+		edge new_edge =new edge(from,to,weight);
+		edge new_edge1 = new edge(to,from,weight);
+		AdjList[from].add(new_edge);
+		AdjList[to].add(new_edge1);
+	}
+	
+	public static int timer;
+	public void find_articulation_point() {
+		int lowVal[] = new int[V];
+		int disTime[] =new int[V];
+		Arrays.fill(lowVal, -1);
+		Arrays.fill(disTime, -1);
+		timer = 0;
+		for(int i=0;i<V;i++) {
+			if(disTime[i]==-1) utility(lowVal,disTime,i,-1);
+		}	
+	}
+	
+	public void utility(int lowVal[],int disTime[],int src,int parent) {
+		lowVal[src] = timer;
+		disTime[src] = timer;
+		timer++;
+		for(edge ele:AdjList[src]) {
+			if(disTime[ele.to]==-1) {
+				utility(lowVal,disTime,ele.to,src);
+				lowVal[src] = Math.min(lowVal[src], lowVal[ele.to]);
+				if(disTime[src]<=lowVal[ele.to] && parent!=-1) {
+					System.out.println("Articulation Point "+src);
+				}
+			}
+			else {
+				if(ele.to!=parent) {
+					lowVal[src] = Math.min(lowVal[src], disTime[ele.to]);
+				}
+			}
+		}
+		
+
+		
+	}
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		int V =sc.nextInt();
+		int E = sc.nextInt();
+		ArticulationPoint graph = new ArticulationPoint(V,E);
+		for(int i=0;i<E;i++) {
+			graph.add_edge(sc.nextInt(), sc.nextInt(), sc.nextInt());
+		}
+		
+		graph.find_articulation_point();
+
+	}
+
+}
