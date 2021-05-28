@@ -42,9 +42,8 @@ public class TarjansAlgo {
 		int timer =0;
 		Stack<Integer> stack = new Stack<>();
 		boolean instack[] = new boolean[V];
-		int src= 0;
 		for(int i=0;i<V;i++){
-	 	   if(time[i]==-1) tarjans_utility(time,low,stack,instack,src);
+	 	   if(time[i]==-1) tarjans_utility(time,low,stack,instack,i);
 		}
 	}
 	
