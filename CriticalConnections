@@ -1,0 +1,69 @@
+https://leetcode.com/problems/critical-connections-in-a-network/
+
+
+class Solution {
+    public static class edge{
+        int from;
+        int to;
+        edge(int from,int to){
+            this.from = from;
+            this.to = to;
+        }
+    }
+    
+    ArrayList<edge> AdjList[];
+    public List<List<Integer>> criticalConnections(int n, List<List<Integer>> connections) {
+        AdjList = new ArrayList[n];
+        for(int i=0;i<n;i++){
+            AdjList[i] = new ArrayList<>();
+        }
+        int E = connections.size();
+        for(int i=0;i<E;i++){
+            edge e = new edge(connections.get(i).get(0),connections.get(i).get(1));
+            AdjList[connections.get(i).get(0)].add(e);
+            edge e1 = new edge(connections.get(i).get(1),connections.get(i).get(0));
+            AdjList[connections.get(i).get(1)].add(e1);
+        }
+        
+        
+        int low[] = new int[n];
+        int time[] = new int[n];
+        Arrays.fill(low,-1);
+        Arrays.fill(time,-1);
+        timer = 0;
+        List<List<Integer>> to_return = new ArrayList<>();
+        func(to_return,low,time,connections.get(0).get(0),-1);
+        return to_return;
+        
+    }
+    public static int timer;
+    
+    public void func(List<List<Integer>> arr,int[] low,int[] dis,int src,int parent){
+        dis[src] = timer;
+        low[src] = timer;
+        timer++;
+        for(edge ele:AdjList[src]){
+            if(dis[ele.to]==-1){
+                func(arr,low,dis,ele.to,src);
+                low[src] = Math.min(low[src],low[ele.to]);
+                
+                if(dis[src]<low[ele.to]){
+                    List<Integer> crit_point = new ArrayList<>();
+                    crit_point.add(src);
+                    crit_point.add(ele.to);
+                    arr.add(crit_point);
+                }
+            }
+            else{
+                if(ele.to==parent) continue;
+                low[src] = Math.min(low[src],dis[ele.to]);   
+            }
+        }
+        
+        
+        
+    }
+}
+
+
+
