@@ -1,7 +1,10 @@
 https://leetcode.com/problems/swim-in-rising-water/
 
 //I can think of 2 Methods to solve this problem. 1st method is Binary Search + DFS + pruning and 2nd method is Dijkstra Algorithm.
-// Here is my solution using 1st method. It goes like suppose you dont know the answer . But you know the range of answer and You Make a guess. It your guess works out, then shift to left part otherwise right just like we do in any binary search. Now all you have to do is write a function which check for a particular value lets say limit, are you able to travel to the right corner. This can simply be done using DFS. 
+// Here is my solution using 1st method. It goes like suppose you dont know the answer . But you know the range of answer and You Make a guess. 
+//If your guess works out, then shift to left part otherwise shift to right  just like we do in any binary search. 
+//Now all you have to do is write a function which check for a particular value,if are you able to travel to the right corner or not.
+//This can simply be done using DFS. 
 
 
 
