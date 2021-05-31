@@ -1,0 +1,78 @@
+class Solution {
+    ArrayList<edge> AdjList[];
+    public static class edge{
+        int from;
+        int to;
+        int weight;
+        edge(int from,int to,int weight){
+            this.from = from;
+            this.to = to;
+            this.weight = weight;
+        }
+    }
+    
+    public int networkDelayTime(int[][] times, int n, int k) {
+        AdjList = new ArrayList[n+1];
+        for(int i=1;i<=n;i++){
+            AdjList[i] = new ArrayList<>();
+        }
+        int E = times.length;
+        for(int i=0;i<E;i++){
+            edge e = new edge(times[i][0],times[i][1],times[i][2]);
+            AdjList[times[i][0]].add(e);
+        }
+        
+        return dijkstra(k,n);
+            
+    }
+    
+    public static class pair implements Comparable<pair>{
+        int ind;
+        int val;
+        pair(int ind,int val){
+            this.ind = ind;
+            this.val = val;
+        }
+        @Override
+        public int compareTo(pair p){
+            return this.val-p.val;
+        }
+    }
+    
+    public int dijkstra(int src,int V){
+        
+        PriorityQueue<pair> pq = new PriorityQueue<>();
+        int distance[] = new int[V+1];
+        boolean visited[] = new boolean[V+1];
+        Arrays.fill(distance,Integer.MAX_VALUE);
+        distance[src] = 0;
+        pq.add(new pair(src,0));
+        while(pq.size()>0){
+            pair p = pq.poll();
+            int ind= p.ind;
+            int val = p.val;
+            visited[p.ind]= true;
+            for(edge ele:AdjList[p.ind]){
+                if(visited[ele.to]==false && ele.weight+p.val<distance[ele.to]){
+                    distance[ele.to] = ele.weight+p.val;
+                    pq.add(new pair(ele.to,ele.weight+p.val));
+                }
+            }
+            
+        }
+        
+        int min = 0;
+        for(int i=1;i<V+1;i++){
+            if(distance[i] == Integer.MAX_VALUE) return -1;
+            if(distance[i]>min && i!=src){
+                min = distance[i];
+            }
+        }
+        
+        return min;
+        
+        
+    }
+    
+    
+}
