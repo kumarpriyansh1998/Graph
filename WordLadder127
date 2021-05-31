@@ -1,0 +1,47 @@
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordLis) {
+        if(wordLis.contains(endWord)==false) return 0;
+        if(beginWord.equals(endWord)) return 0;
+        Queue<String> queue = new ArrayDeque<>();
+        HashSet<String> wordList= new HashSet<>();
+        for(String ele:wordLis) wordList.add(ele);
+        queue.add(beginWord);
+        int level =0;
+        while(queue.size()>0){
+            level++;
+            int n = queue.size();
+            for(int i=0;i<n;i++){
+                String top = queue.remove();
+                ArrayList<String> next = give_next(wordList,top);
+                for(String ele:next){
+                    // System.out.println(ele+" "+level);
+                    if(ele.equals(endWord)) return level+1;
+                    queue.add(ele);
+                }
+                
+                
+            }
+            
+        }
+        
+        return 0;
+    }
+    
+    public ArrayList<String> give_next(HashSet<String> wordList,String current){
+        ArrayList<String> answer = new ArrayList<>();
+        for(int i=0;i<current.length();i++){
+            for(char j='a';j<='z';j++){
+                String newString = current.substring(0,i)+j+current.substring(i+1);
+                if(newString!=current){
+                    if(wordList.contains(newString)){
+                        wordList.remove(newString);
+                        answer.add(newString);
+                    }
+                }
+            }
+        }
+        
+        return answer;
+        
+    }
+}
