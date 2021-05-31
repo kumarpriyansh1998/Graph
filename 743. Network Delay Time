@@ -43,7 +43,6 @@ class Solution {
         
         PriorityQueue<pair> pq = new PriorityQueue<>();
         int distance[] = new int[V+1];
-        boolean visited[] = new boolean[V+1];
         Arrays.fill(distance,Integer.MAX_VALUE);
         distance[src] = 0;
         pq.add(new pair(src,0));
@@ -51,9 +50,9 @@ class Solution {
             pair p = pq.poll();
             int ind= p.ind;
             int val = p.val;
-            visited[p.ind]= true;
+     
             for(edge ele:AdjList[p.ind]){
-                if(visited[ele.to]==false && ele.weight+p.val<distance[ele.to]){
+                if(ele.weight+p.val<distance[ele.to]){
                     distance[ele.to] = ele.weight+p.val;
                     pq.add(new pair(ele.to,ele.weight+p.val));
                 }
