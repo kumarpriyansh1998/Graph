@@ -1,0 +1,87 @@
+package Graph;
+
+import java.util.*;
+
+public class UndirectedCyclic {
+	int V;
+	int E;
+	ArrayList<edge> adjlist[];
+	
+	UndirectedCyclic(int V,int E){
+		this.V = V;
+		this.E = E;
+		adjlist = new ArrayList[V];
+		for(int i=0;i<V;i++) {
+			adjlist[i] = new ArrayList<>();
+		}
+		
+	}
+	
+	public class edge{
+		int from;
+		int to;
+		int weight;
+		
+		edge(int from,int to,int weight){
+			this.from = from;
+			this.to = to;
+			this.weight = weight;
+			
+		}
+	}
+	
+	
+	public void addedge(int from,int to,int weight) {
+		edge e1 = new edge(from,to,weight);
+		edge e2 = new edge(to,from,weight);
+		adjlist[from].add(e1);
+		adjlist[to].add(e2);
+	}
+	
+	public boolean iscycle() {
+		boolean visited[] = new boolean[V];
+		for(int i=0;i<V;i++) {
+			if(visited[i]==false) {
+				boolean isc = iscycle_util(i,visited);
+				if(isc==true) return true;
+			}
+		}
+		return false;
+	}
+	
+//	using BFS
+	public boolean iscycle_util(int src,boolean visited[]) {
+		Queue<Integer> queue = new ArrayDeque<>();
+		queue.add(src);
+		while(queue.size()>0) {
+			int top = queue.remove();
+			if(visited[top]==true) return true;
+			else visited[top] = true;
+			
+			for(edge ele:adjlist[src]) {
+				if(visited[ele.to]==false) queue.add(ele.to);
+			}
+		}
+		
+		
+		
+		return false;
+	}
+	
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		int V = sc.nextInt();
+		int E =sc.nextInt();
+		UndirectedCyclic graph = new UndirectedCyclic(V,E);
+		for(int i=0;i<E;i++) {
+			graph.addedge(sc.nextInt(), sc.nextInt(), sc.nextInt());
+		}
+		boolean c =graph.iscycle();
+		System.out.println(c);
+
+
+	}
+
+}
