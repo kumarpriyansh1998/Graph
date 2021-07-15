@@ -1,0 +1,94 @@
+package Graph;
+
+import java.util.*;
+
+public class HamiltonianPathandCycle {
+	int V;
+	int E;
+	ArrayList<edge> adjlist[];
+	
+	HamiltonianPathandCycle(int V,int E){
+		this.V = V;
+		this.E = E;
+		adjlist = new ArrayList[V];
+		for(int i=0;i<V;i++) {
+			adjlist[i] = new ArrayList<>();
+		}
+		
+	}
+	
+	public class edge{
+		int from;
+		int to;
+		int weight;
+		
+		edge(int from,int to,int weight){
+			this.from = from;
+			this.to = to;
+			this.weight = weight;
+			
+		}
+	}
+	
+	
+	public void addedge(int from,int to,int weight) {
+		edge e1 = new edge(from,to,weight);
+		edge e2 = new edge(to,from,weight);
+		adjlist[from].add(e1);
+		adjlist[to].add(e2);
+	}
+
+	public void hamiltonianPath(int src) {
+		
+		String path=""+src;
+		HashSet<Integer> visited = new HashSet<>();
+		hamiltonian_util(path,visited,src,src);
+	}
+	
+	public void hamiltonian_util(String path,HashSet<Integer> visited,int src,int head) {
+		
+		
+		if(visited.size()==V-1) {
+			boolean iscycle = false;
+			for(edge ele:adjlist[src]) {
+				if(ele.to==head) iscycle = true;
+			}
+			
+			if(iscycle==true) {
+				System.out.println("HamiltonianCycle "+path);
+			}else {
+				System.out.println("HamiltonianPath "+path);
+			}
+		}
+		
+		
+		visited.add(src);
+		for(edge ele:adjlist[src]) {
+			
+			if(!visited.contains(ele.to)) hamiltonian_util(path+""+ele.to,visited,ele.to,head);
+		}
+		visited.remove(src);
+		
+	}
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		int V = sc.nextInt();
+		int E =sc.nextInt();
+		HamiltonianPathandCycle graph = new HamiltonianPathandCycle(V,E);
+		for(int i=0;i<E;i++) {
+			graph.addedge(sc.nextInt(), sc.nextInt(), sc.nextInt());
+		}
+		graph.hamiltonianPath(4);
+
+	}
+
+}
+
+
+
+
+
+
+
