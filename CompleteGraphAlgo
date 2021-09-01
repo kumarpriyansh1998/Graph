@@ -1,0 +1,569 @@
+package TextProcessing;
+import java.util.*;
+
+public class Graph {
+		
+	int e;
+	int v;
+	ArrayList<node> adjlist[];
+	ArrayList<int[]> edgelist;
+	int  adjmatrix[][];
+	public edge arr[];
+	
+	public class node{
+		int from;
+		int to;
+		int weight;
+		node(int from,int to,int weight){
+			this.from = from;
+			this.to = to;
+			this.weight = weight;
+		}
+	}
+	
+	
+	Graph(int v,int e){
+		this.e = e;
+		this.v = v;
+		adjlist = new ArrayList[v];
+		edgelist = new ArrayList<>();
+		arr = new edge[v];
+		adjmatrix = new int[v][v]; 
+		for(int i=0;i<v;i++) {
+			adjlist[i] = new ArrayList<>();
+			arr[i] = new edge();
+		}
+	}
+	
+	public void addnode(int from,int to,int weight) {
+		node n1 = new node(from,to,weight);
+		node n2 = new node(to,from,weight);
+		adjlist[from].add(n1);
+		adjlist[to].add(n2);
+		edgelist.add(new int[] {from,to,weight});
+		return; 
+	}
+	
+	public void addnode_adjmatrix(int from,int to,int weight) {
+		adjmatrix[from][to] = weight;
+		adjmatrix[to][from] = weight;
+		
+	}
+	
+	public void BFS() {
+		boolean visited[] = new boolean[v];
+		Queue<node> queue = new ArrayDeque<>();
+		StringBuilder sb = new StringBuilder();
+		for(int i=0;i<v;i++) {
+			if(visited[i]==false) {
+				queue.add(adjlist[i].get(0));
+				while(queue.size()>0) {
+					node top = queue.remove();
+					if(visited[top.from]==true) continue;
+					visited[top.from] = true;
+					sb.append(top.from+"->");
+					for(node ele:adjlist[top.from]) {
+						if(visited[ele.to]==false) {
+							queue.add(ele);
+						}
+					}
+				}
+				
+			}
+		}
+		
+		System.out.println(sb);
+		
+	}
+	
+	
+	public void DFS() {
+		boolean visited[] = new boolean[v];
+		StringBuilder sb = new StringBuilder();
+		for(int i=0;i<v;i++) {
+			if(visited[i]==false) {
+				DFSutil(visited,i,sb);
+			}
+		}
+		System.out.println(sb);
+	}
+	
+	
+	private void DFSutil(boolean visited[],int src,StringBuilder sb) {
+		visited[src] = true;
+		sb.append(src+"->");
+		for(node ele:adjlist[src]) {
+			if(visited[ele.to]==false) {
+				DFSutil(visited,ele.to,sb);
+			}
+		}
+		
+	}
+
+	
+//	public boolean isCycleUndirected() {
+////		BFS
+//		Queue<Integer> queue = new ArrayDeque<>();
+//		boolean visited[] = new boolean[v];
+//		for(int i=0;i<v;i++) {
+//			if(visited[i]==false) {			
+//				queue.add(i);
+//				while(queue.size()>0) {			
+//					int top = queue.remove();
+//					if(visited[top]==true) {
+//						return true;
+//					}e
+//					visited[top] = true;
+//					for(node ele:adjlist[top]) {
+//						if(visited[ele.to]==false) queue.add(ele.to);
+//					}
+//				}
+//			}
+//		}
+//		
+//		return false;
+//		
+//	
+//	}
+	
+
+	
+	public boolean CycleDirected() {
+		int visited[] = new int[v];
+		for(int i=0;i<v;i++) {
+			if(visited[i]==0) {
+				boolean ans = CycleDirectedutil(visited,i);
+				if(ans==true) return true;
+			}
+		}
+		return false;
+		
+	}
+	
+	public boolean CycleDirectedutil(int visited[],int i) {
+		if(visited[i]==1) return true;
+		visited[i] = 1;
+		for(node ele:adjlist[i]) {
+			if(visited[ele.to]!=2) {
+				if(CycleDirectedutil(visited,ele.to)==true) return true;
+			}
+		}
+		visited[i] = 2;
+		return false;	
+	}
+	
+
+	
+	public class edge{
+		int rank;
+		int parent;
+		edge(){
+			this.rank = 0;
+			this.parent = -1;
+		}
+	}
+	
+	
+	
+	public boolean union(int a,int b) {
+		edge e1 = arr[a];
+		edge e2 = arr[b];
+		if(e1.rank>e2.rank) {
+			e2.parent = a;
+		}else if(e2.rank>e1.rank) {
+			e1.parent = b;
+		}else {
+			e1.parent = b;
+			e2.rank++;
+			
+		}
+		return false;
+		
+	}
+	
+	
+	public int find(int a) {
+		if(arr[a].parent==-1) return a;
+		return arr[a].parent = find(arr[a].parent);
+	}
+	
+	public boolean isCycleUndirected() {
+		for(int ele[]:edgelist) {
+			int f1 = find(ele[0]);
+			int f2 = find(ele[1]);
+			if(f1==f2) return true;
+			union(f1,f2);
+		}
+		return false;
+	}
+	
+	public boolean checkBiPartite() {
+		
+		int color[] = new int[v];
+		Arrays.fill(color, -1);
+		for(int i=0;i<v;i++) {
+			if(color[i]==-1) {
+				boolean ans = BiPartiteUtil(i,color,-1);
+				if(ans==true) return true;
+			}
+		}
+		return false;
+	}
+	
+	public boolean BiPartiteUtil(int src,int color[],int parent) {
+		if(color[src]==-1) color[src] = 1;
+		for(node ele:adjlist[src]) {
+			if(ele.to==parent) continue;
+			if(color[ele.to]==-1) {
+				color[ele.to] = 1-color[src];
+				if(BiPartiteUtil(ele.to,color,src)==true) return true;
+			}else {
+				if(color[ele.to]==color[src]) return true;
+			}
+			
+		}
+		return false;
+	}
+	
+	
+	
+	public void krushkalsMST() {
+		Collections.sort(edgelist,(a,b)->{
+			return a[2]-b[2];
+		});
+//		for(int ele[]:edgelist) {
+//			System.out.println(Arrays.toString(ele));
+//		}
+		int weight =0;
+		int count =0;
+		for(int ele[]:edgelist) {
+			int f1 = find(ele[0]);
+			int f2 = find(ele[1]);
+			if(f1==f2) {
+				continue;
+			}else {
+				weight+=ele[2];
+				count++;
+				System.out.println(Arrays.toString(ele));
+				union(f1,f2);
+				if(count==v-1) break;
+			}
+		}
+		
+		System.out.println(weight);
+		
+		
+	}
+	
+	public class dijk implements Comparable<dijk>{
+		int parent;
+		int val;
+		int dist;
+		dijk(int val,int dist){
+			this.val = val;
+			this.dist = dist;
+		}
+		dijk(int val,int dist,int parent){
+			this.val = val;
+			this.dist = dist;
+			this.parent = parent;
+		}
+		@Override
+		public int compareTo(dijk o) {
+			return this.dist-o.dist;
+		}
+	}
+	
+	public void dijkstra() {
+		PriorityQueue<dijk> pq = new PriorityQueue<>();
+		pq.add(new dijk(0,0));
+		int cost[] = new int[v];
+		boolean visited[] = new boolean[v];
+		while(pq.size()>0) {
+			dijk top = pq.remove();
+			if(visited[top.val]==true) continue;
+			cost[top.val] = top.dist;
+			visited[top.val] = true;
+			for(node ele:adjlist[top.val]) {
+				if(visited[ele.to]==false) pq.add(new dijk(ele.to,ele.weight+top.dist));
+			}
+		}
+		
+		System.out.println(Arrays.toString(cost));
+	}
+	
+	public void Prims() {
+		PriorityQueue<dijk> pq = new PriorityQueue<>();
+		pq.add(new dijk(0,0,-1));
+//		int cost[] = new int[v];
+		int cost =0;
+		boolean visited[] = new boolean[v];
+		while(pq.size()>0) {
+			dijk top = pq.remove();
+//			System.out.println(top.dist);
+			if(visited[top.val]==true) continue;
+			if(top.parent!=-1) System.out.println(top.parent+" "+top.val+" "+top.dist);
+			cost+=top.dist;
+//			cost[top.val] = top.dist;
+			visited[top.val] = true;
+			for(node ele:adjlist[top.val]) {
+				if(visited[ele.to]==false) pq.add(new dijk(ele.to,ele.weight,ele.from));
+			}
+		}
+		
+		System.out.println(cost);
+	}
+	
+	
+	public void BellmanFord() {
+		int dist[] = new int[v];
+		Arrays.fill(dist, Integer.MAX_VALUE);
+		dist[0] =0;
+		
+		for(int i=0;i<v-1;i++) {
+			boolean update = false;
+			for(int ele[]:edgelist) {
+				int f = ele[0];
+				int t = ele[1];
+				int w = ele[2];
+				if(dist[t]==Integer.MAX_VALUE) continue;
+				if(dist[f]+w<dist[t]) {
+					dist[t] = dist[f]+w;
+					update = true;
+				}
+			}
+			if(update = false) break;
+		}
+		
+		boolean update = false;
+		for(int ele[]:edgelist) {
+			int f = ele[0];
+			int t = ele[1];
+			int w = ele[2];
+			
+			if(dist[f]+w<dist[t]) {
+				dist[t] = dist[f]+w;
+				update = true;
+			}
+		}
+
+
+		
+		if(update == true) System.out.println("Negative EdgeWeight Cycle");
+		else {
+			System.out.println(Arrays.toString(dist));
+		}
+	}
+	
+	
+	public void FloydWarshall() {
+		
+		
+		int d[][] = new int[v][v];
+		for(int i=0;i<v;i++) {
+			for(int j=0;j<v;j++) {
+				if(i!=j) d[i][j] = Integer.MAX_VALUE;
+			}
+		}
+		
+		for(int ele[]:edgelist) {
+			int f = ele[0];
+			int t = ele[1];
+			int w = ele[2];
+			d[f][t] = w;
+			d[t][f] = w;
+		}
+
+		
+		for(int i=0;i<v;i++) {
+			for(int j=0;j<v;j++) {
+				for(int k=0;k<v;k++) {
+					
+					d[i][j] = Math.min(d[i][j], d[i][k]+d[k][j]);
+					
+				}
+			}
+		}
+		
+//		for(int ele[]:d) {
+//			System.out.println(Arrays.toString(ele));
+//		}
+//		
+	}
+	
+	
+	public void kosaraju() {
+	
+		Stack<Integer> stack = new Stack<>();
+		boolean visited[] = new boolean[v];
+		for(int i=0;i<v;i++) {
+			if(visited[i]==false) {
+				KosarajuUtil(stack,visited,i);
+			}
+		}
+//		System.out.println(stack);
+		ArrayList<node>[] revedge = reverseEdge();
+		visited = new boolean[v];
+		ArrayList<ArrayList<Integer>> SCC = new ArrayList<>();
+		ArrayList<Integer> temp = new ArrayList<>();
+		while(stack.size()>0) {
+			int top = stack.pop();
+			if(visited[top]==true) continue;
+			else {
+				KosarajuUtil2(visited,top,revedge,temp);
+				SCC.add(temp);
+//				System.out.println(temp);
+				temp = new ArrayList<>();
+			}
+			
+		}
+		
+		System.out.println(SCC);
+		
+	}
+	
+	public void KosarajuUtil2(boolean visited[],int i,ArrayList<node>[] arr,ArrayList<Integer> temp) {
+		visited[i] = true;
+		temp.add(i);
+		for(node ele:arr[i]) {
+			if(visited[ele.to]==false) KosarajuUtil2(visited,ele.to,arr,temp);
+			
+		}
+	}
+	
+	public void KosarajuUtil(Stack<Integer> stack,boolean visited[],int i) {
+		visited[i] = true;
+		for(node ele:adjlist[i]) {
+			if(visited[ele.to]==false) KosarajuUtil(stack,visited,ele.to);
+		}
+		stack.push(i);	
+	}
+	
+	public ArrayList<node>[] reverseEdge() {
+		ArrayList<node> rev[] = new ArrayList[v];
+		for(int i=0;i<v;i++) {
+			rev[i] = new ArrayList<>();
+		}
+		
+		for(int ele[]:edgelist) {
+			int f = ele[0];
+			int t = ele[1];
+			int w = ele[2];
+			node n = new node(t,f,w);
+			rev[t].add(n);
+		}
+		
+		return rev;
+		
+		
+	}
+	
+	
+	public void Bridges() {
+		boolean visited[] = new boolean[v];
+		int lowval[] =new int[v];
+		int distime[] = new int[v];
+		int time =0;
+		ArrayList<int[]> bridge = new ArrayList<>();
+		for(int i=0;i<v;i++) {
+			if(visited[i]==false) BridgesUtil(visited,i,lowval,distime,time,-1,bridge);
+		}
+		for(int ele[]:bridge) {
+			System.out.println(Arrays.toString(ele));
+		}
+	}
+	
+	public void BridgesUtil(boolean visited[],int src,int lowval[],int distime[],int time,int parent,ArrayList<int[]> bridge) {
+		visited[src] =true;
+		lowval[src] = distime[src] = time++;
+		for(node ele:adjlist[src]) {
+			if(visited[ele.to]==false) {
+				BridgesUtil(visited,ele.to,lowval,distime,time,src,bridge);
+				lowval[src] = Math.min(lowval[ele.to], lowval[src]);
+				if(distime[src]<lowval[ele.to]) {
+					bridge.add(new int[] {src,ele.to});
+				}
+			}
+			else {
+				if(ele.to==parent) continue;
+				else {
+					lowval[src] = Math.min(lowval[src], distime[ele.to]);
+				}
+			}
+		}
+		
+		
+		
+	}
+	
+	public void ArticulationPoints() {
+		boolean visited[] = new boolean[v];
+		int lowval[] =new int[v];
+		int distime[] = new int[v];
+		int time =0;
+		boolean apoints[] = new boolean[v];
+		for(int i=0;i<v;i++) {
+			if(visited[i]==false) APutil(visited,i,lowval,distime,time,-1,apoints);
+		}
+		ArrayList<Integer> answer = new ArrayList<>();
+		for(int i=0;i<v;i++) {
+			if(apoints[i]==true) answer.add(i);
+		}
+		System.out.println(answer);
+		
+	}
+	
+	public void APutil(boolean visited[],int src,int lowval[],int distime[],int time,int parent,boolean apoints[]) {
+		visited[src] =true;
+		lowval[src] = distime[src] = time++;
+		int child =0;
+		for(node ele:adjlist[src]) {
+			if(ele.to==parent) continue;
+			if(visited[ele.to]==false) {
+				child++;
+				APutil(visited,ele.to,lowval,distime,time,src,apoints);
+				lowval[src] = Math.min(lowval[src], lowval[ele.to]);
+				if(parent==-1 && child>1) {
+					apoints[src] = true;
+				}
+				if(distime[src]<=lowval[ele.to]) {
+					if(parent!=-1) apoints[src] = true;
+				}
+				
+			}else {
+				lowval[src] = Math.min(lowval[src], distime[ele.to]);
+			}
+		}	
+	}
+	
+	
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Scanner sc = new Scanner(System.in);
+		int v = sc.nextInt();
+		int e = sc.nextInt();
+		Graph graph = new Graph(v,e);
+		for(int i=0;i<e;i++) {
+			graph.addnode(sc.nextInt(), sc.nextInt(), sc.nextInt());
+		}
+		
+//		graph.BFS();
+//		graph.DFS();
+//		System.out.println(graph.isCycleUndirected());
+//		System.out.println(graph.CycleDirected());
+//		graph.krushkalsMST();
+//		graph.dijkstra();
+//		graph.Prims();
+//		graph.BellmanFord();
+//		graph.FloydWarshall();
+//		graph.kosaraju();
+//		graph.Bridges();
+//		graph.ArticulationPoints();
+//		System.out.println(graph.checkBiPartite());
+		
+		
+
+	}
+
+}
